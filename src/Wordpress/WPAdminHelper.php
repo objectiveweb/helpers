@@ -1,6 +1,6 @@
 <?php
 
-namespace Objectiveweb\Helpers\Wordpress;
+namespace Objectiveweb\Helper\Wordpress;
 
 class WPAdminHelper {
 
@@ -196,6 +196,8 @@ class WPAdminHelper {
 
     function table($data, $labels = [], $actions = []) {
 
+        $page = $_GET['page'];
+
         if(empty($data['data'])) {
             return;
         }
@@ -212,9 +214,27 @@ class WPAdminHelper {
                 <input id=\"cb-select-all-1\" type=\"checkbox\">
                 </td>";
 
+        if(!empty($data['page']['order'])) {
+            $sort = explode(" ", $data['page']['order']);
+            $sorted = ($sort[0] == $col);
+            $dir = (empty($sort[1]) ? "asc" : $sort[1]);
+        } else {
+            $sorted = false;
+        }
+
         foreach($labels as $col => $title) {
-            echo "<th scope=\"col\" id=\"$col\" class=\"manage-column column-title column-primary sortable desc\">
-                <a href=\"?orderby=$col&amp;order=asc\">";
+
+            if($sorted) {
+                $class = "sorted $dir";
+                $order = urlencode("$col ".($dir == "asc" ? "desc" : "asc"));
+            }
+            else {
+                $class = "sortable desc";
+                $order = urlencode($col);
+            }
+
+            echo "<th scope=\"col\" id=\"$col\" class=\"manage-column column-title column-primary $class\">
+                <a href=\"?page={$_GET['page']}&order={$order}\">";
             printf("<span>%s</span>", is_callable($title) ? $title(null) : $title);
             echo "<span class=\"sorting-indicator\"></span></a></th>";
         }
@@ -258,10 +278,97 @@ class WPAdminHelper {
 //                <a href="http://goodsports.localhost/wordpress/wp-admin/post.php?post=1037&amp;action=trash&amp;_wpnonce=c333c9d19a" class="submitdelete" aria-label="Move “Colombiano Miguel Lopez ataca de novo e vence em Sierra Nevada” to the Trash">Trash</a> |
 //                </span><span class="view"><a href="http://goodsports.localhost/2017/09/03/colombiano-miguel-lopez-ataca-de-novo-e-vence-em-sierra-nevada/" rel="bookmark" aria-label="View “Colombiano Miguel Lopez ataca de novo e vence em Sierra Nevada”">View</a></span></div>
         }
-
         echo "</tbody>";
+
+        echo "</table>";
     }
 
+
+    function tablenav($data, $pos = 'top') {
+
+        if(empty($data['page'])) {
+            return;
+        }
+
+        $page = $data['page'];
+        $order = urlencode($page['order']);
+        $url = "?page={$_GET['page']}&order={$order}&size={$page['size']}&paged=";
+        //$sort = explode(" ", $page['order']);
+
+        echo "<form action=\"$url\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"page\" value=\"{$_GET['page']}\"/>";
+        echo "<input type=\"hidden\" name=\"order\" value=\"$order\"/>";
+        echo "<input type=\"hidden\" name=\"size\" value=\"{$page['size']}\"/>";
+
+        /**
+         *<div class="alignleft actions bulkactions">
+        <label for="bulk-action-selector-top" class="screen-reader-text">Select bulk action</label><select name="action" id="bulk-action-selector-top">
+        <option value="-1">Bulk Actions</option>
+        <option value="edit" class="hide-if-no-js">Edit</option>
+        <option value="trash">Move to Trash</option>
+        </select>
+        <input type="submit" id="doaction" class="button action" value="Apply">
+        </div>
+        <div class="alignleft actions">
+        <label for="filter-by-date" class="screen-reader-text">Filter by date</label>
+        <select name="m" id="filter-by-date">
+        <option selected="selected" value="0">All dates</option>
+        <option value="201709">September 2017</option>
+        <option value="201708">August 2017</option>
+        <option value="201707">July 2017</option>
+        </select>
+        <label class="screen-reader-text" for="cat">Filter by category</label><select name="cat" id="cat" class="postform">
+        <option value="0">All Categories</option>
+        <option class="level-0" value="4">BIKE</option>
+        <option class="level-1" value="81">&nbsp;&nbsp;&nbsp;BMX</option>
+        <option class="level-1" value="32">&nbsp;&nbsp;&nbsp;ESTRADA</option>
+        <option class="level-1" value="33">&nbsp;&nbsp;&nbsp;MTB</option>
+        <option class="level-0" value="34">CICLOMOBILIDADE</option>
+        <option class="level-1" value="82">&nbsp;&nbsp;&nbsp;CICLOFAIXA</option>
+        <option class="level-1" value="83">&nbsp;&nbsp;&nbsp;CICLOTURISMO</option>
+        <option class="level-0" value="5">CORRIDA DE RUA</option>
+        <option class="level-0" value="3">TRIATHLON</option>
+        <option class="level-0" value="1">Uncategorized</option>
+        </select>
+        <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">		</div>
+
+         */
+        echo "<div class=\"tablenav $pos\">
+				<div class=\"tablenav-pages\"><span class=\"displaying-num\">{$page['totalElements']} items</span>
+                    <span class=\"pagination-links\">";
+
+        if($page['number'] > 2) {
+            echo "<a class=\"first-page\" href=\"{$url}1\"><span class=\"screen-reader-text\">First page</span><span aria-hidden=\"true\">«</span></a>";
+        } else {
+            echo "<span class=\"tablenav - pages - navspan\" aria-hidden=\"true\">«</span>";
+        }
+
+        if($page['number'] > 1) {
+            echo "<a class=\"prev-page\" href=\"$url{$page['prev']}\"><span class=\"screen-reader-text\">Previous page</span><span aria-hidden=\"true\">‹</span></a>";
+        } else {
+            echo "<span class=\"tablenav-pages-navspan\" aria-hidden=\"true\">‹</span>";
+        }
+
+        echo "
+                        <span class=\"paging-input\">
+                            <label for=\"current-page-selector\" class=\"screen-reader-text\">Current Page</label>
+                            <input class=\"current-page\" id=\"current-page-selector\" type=\"text\" name=\"paged\" value=\"{$page['number']}\" size=\"2\" aria-describedby=\"table-paging\">
+                            <span class=\"tablenav-paging-text\"> of <span class=\"total-pages\">{$page['totalPages']}</span></span>
+                        </span>
+                        <a class=\"next-page\" href=\"$url{$page['next']}\">
+                            <span class=\"screen-reader-text\">Next page</span>
+                            <span aria-hidden=\"true\">›</span>
+                        </a>
+                        <a class=\"last-page\" href=\"$url{$page['totalPages']}\">
+                            <span class=\"screen-reader-text\">Last page</span>
+                            <span aria-hidden=\"true\">»</span>
+                         </a>
+                    </span>
+                </div>
+		        <br class=\"clear\">
+	        </div>";
+        echo "</form>";
+    }
 
     function wrap($callback, $param = null) {
 
