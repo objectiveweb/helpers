@@ -214,16 +214,15 @@ class WPAdminHelper {
                 <input id=\"cb-select-all-1\" type=\"checkbox\">
                 </td>";
 
-        if(!empty($data['page']['order'])) {
-            $sort = explode(" ", $data['page']['order']);
-            $sorted = ($sort[0] == $col);
-            $dir = (empty($sort[1]) ? "asc" : $sort[1]);
-        } else {
-            $sorted = false;
-        }
 
         foreach($labels as $col => $title) {
-
+            if(!empty($data['page']['order'])) {
+                $sort = explode(" ", $data['page']['order']);
+                $sorted = ($sort[0] == $col);
+                $dir = (empty($sort[1]) ? "asc" : $sort[1]);
+            } else {
+                $sorted = false;
+            }
             if($sorted) {
                 $class = "sorted $dir";
                 $order = urlencode("$col ".($dir == "asc" ? "desc" : "asc"));
