@@ -3,7 +3,7 @@
   "description": "Objectiveweb Helper Classes",
   "autoload": {
     "psr-4": {
-      "Objectiveweb\\Helpers\\": "src/"
+      "Objectiveweb\\Helper\\": "src/"
     }
   },
   "authors": [

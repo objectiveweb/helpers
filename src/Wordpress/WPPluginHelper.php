@@ -1,6 +1,6 @@
 <?php
 
-namespace Objectiveweb\Helpers\Wordpress;
+namespace Objectiveweb\Helper\Wordpress;
 
 class WPPluginHelper {
 
@@ -29,6 +29,7 @@ class WPPluginHelper {
         $_template = $this->template_root."/$page.php";
 
         if(!is_readable($_template)) {
+            error_log("Cannot read $_template");
             return "";
         }
 
