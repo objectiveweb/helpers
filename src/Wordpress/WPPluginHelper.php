@@ -78,7 +78,7 @@ class WPPluginHelper {
                 call_user_func([$this, $pagename], $_GET)
                 : $this->render($pagename);
         }
-
+        remove_all_filters('the_content');
         add_filter('the_posts', function() use($page){
             return $this->createdummypage($page['name'], $page['title'], $page['content']);
         });
