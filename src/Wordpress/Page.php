@@ -8,7 +8,7 @@ class Page {
     public $content;
     public $vars;
 
-    function __construct($title, $content = null, $vars = [])
+    function __construct($title, $content = null, $vars = null)
     {
         $this->title = $title;
         $this->content = $content;
@@ -74,6 +74,7 @@ class Page {
         $wp_query->queried_object_id = $p->ID;
         $wp_query->current_post = $p->ID;
         $wp_query->post_count = 1;
+
         return array($p);
     }
 }

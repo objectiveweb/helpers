@@ -2,7 +2,7 @@
 
 namespace Objectiveweb\Helper\Wordpress;
 
-class WPAdminHelper {
+class AdminHelper {
 
     protected $menu;
 
