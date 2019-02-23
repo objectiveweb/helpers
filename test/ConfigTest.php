@@ -3,7 +3,7 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Objectiveweb\Helper\Config;
+use Objectiveweb\Util\Config;
 
 class ConfigTest extends PHPUnit_Framework_TestCase
 {

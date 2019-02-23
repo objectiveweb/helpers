@@ -1,6 +1,6 @@
 <?php
 
-namespace Objectiveweb\Helper;
+namespace Objectiveweb\Util;
 
 class Config
 {

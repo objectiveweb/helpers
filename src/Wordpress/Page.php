@@ -1,6 +1,6 @@
 <?php
 
-namespace Objectiveweb\Helper\Wordpress;
+namespace Objectiveweb\Util\Wordpress;
 
 class Page {
 

@@ -1,9 +1,9 @@
 {
-  "name": "objectiveweb/helpers",
+  "name": "objectiveweb/util",
   "description": "Objectiveweb Helper Classes",
   "autoload": {
     "psr-4": {
-      "Objectiveweb\\Helper\\": "src/"
+      "Objectiveweb\\Util\\": "src/"
     }
   },
   "authors": [

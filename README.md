@@ -1,1 +1,1 @@
-# Objectiveweb Helpers ![Build Status](https://travis-ci.org/objectiveweb/helpers.svg?branch=master)
+# Objectiveweb Helpers ![Build Status](https://travis-ci.org/objectiveweb/util.svg?branch=master)
