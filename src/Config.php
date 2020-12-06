@@ -7,11 +7,14 @@ class Config
 
     private $root;
 
+    private $envPrefix;
+
     private static $config = [];
 
-    function __construct($root)
+    function __construct($root, $envPrefix = "CONFIG")
     {
         $this->root = $root . (substr($root, -1) !== '/' ? '/' : '');
+        $this->envPrefix = strtolower($envPrefix);
     }
 
     public static function flush()
@@ -42,6 +45,24 @@ class Config
                     static::$config[$key] = array_merge(static::$config[$key], $config);
                 }
             }
+
+            // merge environment vars
+            if (version_compare(PHP_VERSION, '7.1.0') >= 0) {
+                $envConfig = [$this->envPrefix => [$name => []]];
+                foreach(getenv() as $envkey => $envval) {
+                    $localConfig = &$envConfig;
+                    $__keys = explode("__", strtolower($envkey));
+                    if($__keys[0] == $this->envPrefix && $__keys[1] == $name) {
+                        foreach($__keys as $__key) {
+                            $localConfig = &$localConfig[$__key];
+                        }
+                        $localConfig = !empty($envval) && ($envval[0] == '[' || $envval[0] == '{') ? json_decode($envval, true) : $envval;
+                    }
+                }
+
+                $this->set($name, $envConfig[$this->envPrefix][$name]);
+            }
+
         }
 
         return static::$config[$key];
